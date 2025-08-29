@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Notion - Sign in to your account">
+    <meta name="theme-color" content="#8a3ffc">
+    <title>Notion - Sign in</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📒</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Notion Logo">
+                    <path d="M4 4.00293H28C28.5304 4.00293 29.0391 4.21365 29.4142 4.58872C29.7893 4.9638 30 5.47251 30 6.00293V26.0029C30 26.5334 29.7893 27.0421 29.4142 27.4171C29.0391 27.7922 28.5304 28.0029 28 28.0029H4C3.46957 28.0029 2.96086 27.7922 2.58579 27.4171C2.21071 27.0421 2 26.5334 2 26.0029V6.00293C2 5.47251 2.21071 4.9638 2.58579 4.58872C2.96086 4.21365 3.46957 4.00293 4 4.00293Z" stroke="currentColor" stroke-width="3"/>
+                    <path d="M10 11.0029H22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <h1>Notion</h1>
+            </div>
+            <p class="subtitle">Sign in to your account</p>
+        </header>
+
+        <main>
+            <form id="loginForm" class="login-form" novalidate>
+                <div class="input-group">
+                    <label for="email">Email address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email"
+                        autocomplete="email" 
+                        required
+                        placeholder="name@company.com"
+                        aria-describedby="email-error"
+                        maxlength="254"
+                    >
+                    <div id="email-error" class="error-message" aria-live="polite"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="password-input">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            autocomplete="current-password" 
+                            required
+                            placeholder="Enter your password"
+                            aria-describedby="password-error"
+                            maxlength="128"
+                        >
+                        <button type="button" class="toggle-password" aria-label="Show password">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="password-error" class="error-message" aria-live="polite"></div>
+                    <a href="https://www.notion.so/login" class="forgot-password">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <span class="btn-text">Continue</span>
+                    <div class="loading-spinner" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                                <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                                <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                            </circle>
+                        </svg>
+                    </div>
+                </button>
+                
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
+                <button type="button" class="btn-google">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google
+                </button>
+            </form>
+        </main>
+        
+        <footer class="footer">
+            <p>Don't have an account? <a href="https://www.notion.so/signup" class="signup-link">Sign up</a></p>
+            <p class="copyright">© 2025 Notion Labs, Inc.</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
