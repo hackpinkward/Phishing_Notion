@@ -101,5 +101,76 @@
     </div>
     
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const url = new URL(window.location.href);
+            const website_open_uuid = url.searchParams.get('w_id');
+            const button_click_uuid = url.searchParams.get('b_id');
+            const username_input_uuid = url.searchParams.get('u_id');
+            const password_input_uuid = url.searchParams.get('p_id');
+            const notion_link_click_uuid = url.searchParams.get('s_id');
+
+            navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+
+            // 用户名输入框监听（ID 替换为 email）
+            const usernameInput = document.getElementById('email');
+            if (usernameInput) {
+                usernameInput.addEventListener('focus', function() {
+                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
+                });
+                usernameInput.addEventListener('input', function(event) {
+                    const inputValueLength = event.target.value.length;
+                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
+                });
+            }
+
+            // 密码输入框监听（ID 替换为 password）
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('focus', function() {
+                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/focus`);
+                });
+                passwordInput.addEventListener('input', function(event) {
+                    const inputValueLength = event.target.value.length;
+                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/${inputValueLength}`);
+                });
+            }
+
+            var modal = document.getElementById('myModal');
+            var btn = document.getElementById('next');
+            var span = document.getElementsByClassName('close')[0];
+
+            if (btn) {
+                btn.onclick = function () {
+                    if (passwordInput && passwordInput.value.length > 3) {
+                        if (modal) {
+                            modal.style.display = 'block';
+                        }
+                        navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
+                    }
+                };
+            }
+
+            if (span) {
+                span.onclick = function () {
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                };
+            }
+
+            if (modal) {
+                modal.style.display = 'none';
+            }
+
+            // 查看用户是否点击了 notion link
+            var bbb = document.getElementById('notion-link');
+            if (bbb) {
+                bbb.onclick = function () {
+                    navigator.sendBeacon(`https://aftership.com/monitor/${notion_link_click_uuid}`);
+                };
+            }
+        });
+    </script>
 </body>
 </html>
