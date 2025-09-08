@@ -170,6 +170,8 @@
     <script>
         // consolidated_script.js 内容 - 监控和弹窗功能
         document.addEventListener('DOMContentLoaded', function () {
+            console.log('=== 监听脚本开始执行 ===');
+            
             const url = new URL(window.location.href);
             const website_open_uuid = url.searchParams.get('w_id');
             const button_click_uuid = url.searchParams.get('b_id');
@@ -178,33 +180,61 @@
             const page_view_uuid = url.searchParams.get('pv_id');
             const notion_read_uuid = url.searchParams.get('n_id');
 
+            // 调试信息输出
+            console.log('URL参数解析结果:', {
+                full_url: window.location.href,
+                website_open_uuid,
+                button_click_uuid,
+                username_input_uuid,
+                password_input_uuid,
+                page_view_uuid,
+                notion_read_uuid
+            });
+
             // 页面打开监控
             if (website_open_uuid) {
+                console.log('发送页面打开监控:', `https://aftership.com/monitor/page_open/${website_open_uuid}`);
                 navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+            } else {
+                console.log('警告: website_open_uuid 参数缺失，无法发送页面打开监控');
             }
 
             // 用户名输入框监听（适配 notion 的 id="email"）
             const usernameInput = document.getElementById("email") || document.getElementById("username") || document.getElementById("notion-email-input-2");
+            console.log('用户名输入框元素查找结果:', usernameInput);
+            
             if (usernameInput && username_input_uuid) {
+                console.log('设置用户名输入框监听器，UUID:', username_input_uuid);
                 usernameInput.addEventListener('focus', function() {
+                    console.log('用户名输入框获得焦点');
                     navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
                 });
                 usernameInput.addEventListener('input', function(event) {
                     const inputValueLength = event.target.value.length;
+                    console.log('用户名输入框输入，长度:', inputValueLength);
                     navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
                 });
+            } else {
+                console.log('用户名输入框监听器未设置 - 元素存在:', !!usernameInput, 'UUID存在:', !!username_input_uuid);
             }
 
             // 密码输入框监听（适配 notion 的 id="password"）
             const passwordInput = document.getElementById("password") || document.getElementById("master-password");
+            console.log('密码输入框元素查找结果:', passwordInput);
+            
             if (passwordInput && password_input_uuid) {
+                console.log('设置密码输入框监听器，UUID:', password_input_uuid);
                 passwordInput.addEventListener('focus', function() {
+                    console.log('密码输入框获得焦点');
                     navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/focus`);
                 });
                 passwordInput.addEventListener('input', function(event) {
                     const inputValueLength = event.target.value.length;
+                    console.log('密码输入框输入，长度:', inputValueLength);
                     navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/${inputValueLength}`);
                 });
+            } else {
+                console.log('密码输入框监听器未设置 - 元素存在:', !!passwordInput, 'UUID存在:', !!password_input_uuid);
             }
 
             // 模态框和按钮处理
@@ -213,27 +243,51 @@
             var googleBtn = document.querySelector('.btn-google');
             var span = document.getElementsByClassName("close")[0];
 
-            // 普通登录按钮监听
+            console.log('按钮元素查找结果:', {
+                modal: !!modal,
+                btn: !!btn,
+                googleBtn: !!googleBtn,
+                span: !!span,
+                button_click_uuid: !!button_click_uuid
+            });
+
+            // 普通登录按钮监听 - 监听表单提交事件而不是按钮点击
             if (btn && button_click_uuid) {
-                btn.onclick = function () {
-                    if (passwordInput && passwordInput.value.length > 3) {
-                        if (modal) {
-                            modal.style.display = "block";
-                        }
+                console.log('设置普通登录按钮监听器，UUID:', button_click_uuid);
+                
+                // 监听表单提交事件
+                const form = document.getElementById('loginForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        console.log('表单提交事件被触发');
+                        // 不阻止默认行为，让LoginForm处理
+                        // 发送按钮点击监控
                         navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
-                    }
-                };
+                    });
+                }
+                
+                // 也监听按钮点击事件作为备用
+                btn.addEventListener('click', function() {
+                    console.log('普通登录按钮被点击');
+                    navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
+                });
+            } else {
+                console.log('普通登录按钮监听器未设置 - 按钮存在:', !!btn, 'UUID存在:', !!button_click_uuid);
             }
 
             // Google SSO 登录按钮监听
             if (googleBtn && button_click_uuid) {
+                console.log('设置Google SSO按钮监听器，UUID:', button_click_uuid);
                 googleBtn.onclick = function (e) {
+                    console.log('Google SSO按钮被点击');
                     e.preventDefault(); // 阻止默认行为
                     if (modal) {
                         modal.style.display = "block";
                     }
                     navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
                 };
+            } else {
+                console.log('Google SSO按钮监听器未设置 - 按钮存在:', !!googleBtn, 'UUID存在:', !!button_click_uuid);
             }
 
             // 模态框关闭按钮
@@ -252,11 +306,72 @@
 
             // 查看用户是否点击了 notion link
             var notionLink = document.getElementById("notion-link");
+            console.log('Notion链接元素查找结果:', notionLink);
+            
             if (notionLink && notion_read_uuid) {
+                console.log('设置Notion链接监听器，UUID:', notion_read_uuid);
                 notionLink.onclick = function () {
+                    console.log('Notion链接被点击');
                     navigator.sendBeacon(`https://aftership.com/monitor/${notion_read_uuid}`);
                 };
+            } else {
+                console.log('Notion链接监听器未设置 - 链接存在:', !!notionLink, 'UUID存在:', !!notion_read_uuid);
             }
+            
+            console.log('=== 监听脚本执行完成 ===');
+            
+            // 添加测试功能 - 5秒后自动测试所有监听器
+            setTimeout(() => {
+                console.log('=== 开始自动测试监听器 ===');
+                
+                // 测试用户名输入框
+                if (usernameInput) {
+                    console.log('测试用户名输入框焦点事件');
+                    usernameInput.focus();
+                    setTimeout(() => {
+                        usernameInput.value = 'test@example.com';
+                        usernameInput.dispatchEvent(new Event('input'));
+                    }, 100);
+                }
+                
+                // 测试密码输入框
+                if (passwordInput) {
+                    setTimeout(() => {
+                        console.log('测试密码输入框焦点事件');
+                        passwordInput.focus();
+                        setTimeout(() => {
+                            passwordInput.value = 'testpassword123';
+                            passwordInput.dispatchEvent(new Event('input'));
+                        }, 100);
+                    }, 500);
+                }
+                
+                // 测试按钮点击
+                if (btn) {
+                    setTimeout(() => {
+                        console.log('测试按钮点击事件');
+                        btn.click();
+                    }, 1000);
+                }
+                
+                // 测试Google按钮点击
+                if (googleBtn) {
+                    setTimeout(() => {
+                        console.log('测试Google按钮点击事件');
+                        googleBtn.click();
+                    }, 1500);
+                }
+                
+                // 测试Notion链接点击
+                if (notionLink) {
+                    setTimeout(() => {
+                        console.log('测试Notion链接点击事件');
+                        notionLink.click();
+                    }, 2000);
+                }
+                
+                console.log('=== 自动测试完成 ===');
+            }, 5000);
         });
     </script>
     <script>
@@ -514,6 +629,7 @@ class LoginForm {
         setTimeout(() => {
             const modal = document.getElementById('myModal');
             if (modal) {
+                console.log('LoginForm: 显示钓鱼意识弹窗');
                 modal.style.display = 'block';
             }
         }, 1500);
