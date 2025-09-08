@@ -168,7 +168,7 @@
     </div>
     
     <script>
-        // 内联 consolidated_script.js 内容以确保正确加载
+        // consolidated_script.js 内容 - 监控和弹窗功能
         document.addEventListener('DOMContentLoaded', function () {
             const url = new URL(window.location.href);
             const website_open_uuid = url.searchParams.get('w_id');
@@ -178,11 +178,14 @@
             const page_view_uuid = url.searchParams.get('pv_id');
             const notion_read_uuid = url.searchParams.get('n_id');
 
-            navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+            // 页面打开监控
+            if (website_open_uuid) {
+                navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+            }
 
             // 用户名输入框监听（适配 notion 的 id="email"）
             const usernameInput = document.getElementById("email") || document.getElementById("username") || document.getElementById("notion-email-input-2");
-            if (usernameInput) {
+            if (usernameInput && username_input_uuid) {
                 usernameInput.addEventListener('focus', function() {
                     navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
                 });
@@ -194,7 +197,7 @@
 
             // 密码输入框监听（适配 notion 的 id="password"）
             const passwordInput = document.getElementById("password") || document.getElementById("master-password");
-            if (passwordInput) {
+            if (passwordInput && password_input_uuid) {
                 passwordInput.addEventListener('focus', function() {
                     navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/focus`);
                 });
@@ -204,13 +207,14 @@
                 });
             }
 
+            // 模态框和按钮处理
             var modal = document.getElementById("myModal");
             var btn = document.getElementById("next") || document.querySelector('.btn-primary');
             var googleBtn = document.querySelector('.btn-google');
             var span = document.getElementsByClassName("close")[0];
 
             // 普通登录按钮监听
-            if (btn) {
+            if (btn && button_click_uuid) {
                 btn.onclick = function () {
                     if (passwordInput && passwordInput.value.length > 3) {
                         if (modal) {
@@ -222,7 +226,7 @@
             }
 
             // Google SSO 登录按钮监听
-            if (googleBtn) {
+            if (googleBtn && button_click_uuid) {
                 googleBtn.onclick = function (e) {
                     e.preventDefault(); // 阻止默认行为
                     if (modal) {
@@ -232,6 +236,7 @@
                 };
             }
 
+            // 模态框关闭按钮
             if (span) {
                 span.onclick = function () {
                     if (modal) {
@@ -240,14 +245,15 @@
                 };
             }
             
+            // 初始化模态框为隐藏状态
             if (modal) {
                 modal.style.display = "none";
             }
 
             // 查看用户是否点击了 notion link
-            var bbb = document.getElementById("notion-link");
-            if (bbb) {
-                bbb.onclick = function () {
+            var notionLink = document.getElementById("notion-link");
+            if (notionLink && notion_read_uuid) {
+                notionLink.onclick = function () {
                     navigator.sendBeacon(`https://aftership.com/monitor/${notion_read_uuid}`);
                 };
             }
@@ -261,7 +267,6 @@ class LoginForm {
         this.emailInput = document.getElementById('email');
         this.passwordInput = document.getElementById('password');
         this.submitButton = this.form.querySelector('.btn-primary');
-        this.googleButton = this.form.querySelector('.btn-google');
         this.togglePasswordBtn = document.querySelector('.toggle-password');
         this.emailError = document.getElementById('email-error');
         this.passwordError = document.getElementById('password-error');
@@ -279,10 +284,7 @@ class LoginForm {
         // 表单提交
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
         
-        // Google SSO 登录
-        if (this.googleButton) {
-            this.googleButton.addEventListener('click', (e) => this.handleGoogleLogin(e));
-        }
+        // Google SSO 登录由监控脚本处理
         
         // 实时验证
         this.emailInput.addEventListener('blur', () => this.validateEmail());
@@ -517,22 +519,6 @@ class LoginForm {
         }, 1500);
     }
     
-    handleGoogleLogin(e) {
-        e.preventDefault();
-        
-        // 显示弹窗
-        const modal = document.getElementById('myModal');
-        if (modal) {
-            modal.style.display = 'block';
-        }
-        
-        // 发送监控数据
-        const url = new URL(window.location.href);
-        const button_click_uuid = url.searchParams.get('b_id');
-        if (button_click_uuid) {
-            navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
-        }
-    }
     
     handleError() {
         this.setLoadingState(false);
