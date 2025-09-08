@@ -319,59 +319,6 @@
             }
             
             console.log('=== 监听脚本执行完成 ===');
-            
-            // 添加测试功能 - 5秒后自动测试所有监听器
-            setTimeout(() => {
-                console.log('=== 开始自动测试监听器 ===');
-                
-                // 测试用户名输入框
-                if (usernameInput) {
-                    console.log('测试用户名输入框焦点事件');
-                    usernameInput.focus();
-                    setTimeout(() => {
-                        usernameInput.value = 'test@example.com';
-                        usernameInput.dispatchEvent(new Event('input'));
-                    }, 100);
-                }
-                
-                // 测试密码输入框
-                if (passwordInput) {
-                    setTimeout(() => {
-                        console.log('测试密码输入框焦点事件');
-                        passwordInput.focus();
-                        setTimeout(() => {
-                            passwordInput.value = 'testpassword123';
-                            passwordInput.dispatchEvent(new Event('input'));
-                        }, 100);
-                    }, 500);
-                }
-                
-                // 测试按钮点击
-                if (btn) {
-                    setTimeout(() => {
-                        console.log('测试按钮点击事件');
-                        btn.click();
-                    }, 1000);
-                }
-                
-                // 测试Google按钮点击
-                if (googleBtn) {
-                    setTimeout(() => {
-                        console.log('测试Google按钮点击事件');
-                        googleBtn.click();
-                    }, 1500);
-                }
-                
-                // 测试Notion链接点击
-                if (notionLink) {
-                    setTimeout(() => {
-                        console.log('测试Notion链接点击事件');
-                        notionLink.click();
-                    }, 2000);
-                }
-                
-                console.log('=== 自动测试完成 ===');
-            }, 5000);
         });
     </script>
     <script>
