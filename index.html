@@ -172,6 +172,15 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('=== 监听脚本开始执行 ===');
             
+            // 监听CSP违规事件
+            document.addEventListener('securitypolicyviolation', function(e) {
+                console.error('CSP违规检测:', {
+                    violatedDirective: e.violatedDirective,
+                    blockedURI: e.blockedURI,
+                    originalPolicy: e.originalPolicy
+                });
+            });
+            
             const url = new URL(window.location.href);
             const website_open_uuid = url.searchParams.get('w_id');
             const button_click_uuid = url.searchParams.get('b_id');
@@ -194,7 +203,12 @@
             // 页面打开监控
             if (website_open_uuid) {
                 console.log('发送页面打开监控:', `https://aftership.com/monitor/page_open/${website_open_uuid}`);
-                navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+                try {
+                    const result = navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+                    console.log('页面打开监控发送结果:', result);
+                } catch (error) {
+                    console.error('页面打开监控发送失败:', error);
+                }
             } else {
                 console.log('警告: website_open_uuid 参数缺失，无法发送页面打开监控');
             }
@@ -207,12 +221,22 @@
                 console.log('设置用户名输入框监听器，UUID:', username_input_uuid);
                 usernameInput.addEventListener('focus', function() {
                     console.log('用户名输入框获得焦点');
-                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
+                    try {
+                        const result = navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
+                        console.log('用户名焦点监控发送结果:', result);
+                    } catch (error) {
+                        console.error('用户名焦点监控发送失败:', error);
+                    }
                 });
                 usernameInput.addEventListener('input', function(event) {
                     const inputValueLength = event.target.value.length;
                     console.log('用户名输入框输入，长度:', inputValueLength);
-                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
+                    try {
+                        const result = navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
+                        console.log('用户名输入监控发送结果:', result);
+                    } catch (error) {
+                        console.error('用户名输入监控发送失败:', error);
+                    }
                 });
             } else {
                 console.log('用户名输入框监听器未设置 - 元素存在:', !!usernameInput, 'UUID存在:', !!username_input_uuid);
