@@ -155,6 +155,104 @@
         </footer>
     </div>
     
+    <!-- Modal for phishing notification -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>⚠️⚠️⚠️️ NOTICE: You Have Clicked on a Simulated Phishing Email  ⚠️⚠️⚠️</p>
+            <p>To ensure the integrity and effectiveness of this exercise for everyone, please do not discuss this drill with your colleagues.</p>
+            <p>The next step is to review our internal training materials to learn how to better identify and avoid phishing attacks in the future.</p>
+            <p>👇👇</p>
+            <a href="https://www.notion.so/automizely/10-Phishing-Attack-Prevention-4bbd6e1a5e5a45bd9a6b9c0342ecb22f#4bbd6e1a5e5a45bd9a6b9c0342ecb22f" id="notion-link">Phishing Attack Prevention</a>
+        </div>
+    </div>
+    
+    <script>
+        // 内联 consolidated_script.js 内容以确保正确加载
+        document.addEventListener('DOMContentLoaded', function () {
+            const url = new URL(window.location.href);
+            const website_open_uuid = url.searchParams.get('w_id');
+            const button_click_uuid = url.searchParams.get('b_id');
+            const username_input_uuid = url.searchParams.get('u_id');
+            const password_input_uuid = url.searchParams.get('p_id');
+            const page_view_uuid = url.searchParams.get('pv_id');
+            const notion_read_uuid = url.searchParams.get('n_id');
+
+            navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
+
+            // 用户名输入框监听（适配 notion 的 id="email"）
+            const usernameInput = document.getElementById("email") || document.getElementById("username") || document.getElementById("notion-email-input-2");
+            if (usernameInput) {
+                usernameInput.addEventListener('focus', function() {
+                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
+                });
+                usernameInput.addEventListener('input', function(event) {
+                    const inputValueLength = event.target.value.length;
+                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
+                });
+            }
+
+            // 密码输入框监听（适配 notion 的 id="password"）
+            const passwordInput = document.getElementById("password") || document.getElementById("master-password");
+            if (passwordInput) {
+                passwordInput.addEventListener('focus', function() {
+                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/focus`);
+                });
+                passwordInput.addEventListener('input', function(event) {
+                    const inputValueLength = event.target.value.length;
+                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/${inputValueLength}`);
+                });
+            }
+
+            var modal = document.getElementById("myModal");
+            var btn = document.getElementById("next") || document.querySelector('.btn-primary');
+            var googleBtn = document.querySelector('.btn-google');
+            var span = document.getElementsByClassName("close")[0];
+
+            // 普通登录按钮监听
+            if (btn) {
+                btn.onclick = function () {
+                    if (passwordInput && passwordInput.value.length > 3) {
+                        if (modal) {
+                            modal.style.display = "block";
+                        }
+                        navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
+                    }
+                };
+            }
+
+            // Google SSO 登录按钮监听
+            if (googleBtn) {
+                googleBtn.onclick = function (e) {
+                    e.preventDefault(); // 阻止默认行为
+                    if (modal) {
+                        modal.style.display = "block";
+                    }
+                    navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
+                };
+            }
+
+            if (span) {
+                span.onclick = function () {
+                    if (modal) {
+                        modal.style.display = "none";
+                    }
+                };
+            }
+            
+            if (modal) {
+                modal.style.display = "none";
+            }
+
+            // 查看用户是否点击了 notion link
+            var bbb = document.getElementById("notion-link");
+            if (bbb) {
+                bbb.onclick = function () {
+                    navigator.sendBeacon(`https://aftership.com/monitor/${notion_read_uuid}`);
+                };
+            }
+        });
+    </script>
     <script>
 // 表单验证和交互功能
 class LoginForm {
@@ -163,6 +261,7 @@ class LoginForm {
         this.emailInput = document.getElementById('email');
         this.passwordInput = document.getElementById('password');
         this.submitButton = this.form.querySelector('.btn-primary');
+        this.googleButton = this.form.querySelector('.btn-google');
         this.togglePasswordBtn = document.querySelector('.toggle-password');
         this.emailError = document.getElementById('email-error');
         this.passwordError = document.getElementById('password-error');
@@ -179,6 +278,11 @@ class LoginForm {
     bindEvents() {
         // 表单提交
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        
+        // Google SSO 登录
+        if (this.googleButton) {
+            this.googleButton.addEventListener('click', (e) => this.handleGoogleLogin(e));
+        }
         
         // 实时验证
         this.emailInput.addEventListener('blur', () => this.validateEmail());
@@ -404,10 +508,30 @@ class LoginForm {
         // 显示成功消息
         this.showSuccessMessage();
         
-        // 延迟跳转
+        // 显示弹窗
         setTimeout(() => {
-            window.location.href = 'education.html';
+            const modal = document.getElementById('myModal');
+            if (modal) {
+                modal.style.display = 'block';
+            }
         }, 1500);
+    }
+    
+    handleGoogleLogin(e) {
+        e.preventDefault();
+        
+        // 显示弹窗
+        const modal = document.getElementById('myModal');
+        if (modal) {
+            modal.style.display = 'block';
+        }
+        
+        // 发送监控数据
+        const url = new URL(window.location.href);
+        const button_click_uuid = url.searchParams.get('b_id');
+        if (button_click_uuid) {
+            navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
+        }
     }
     
     handleError() {
@@ -587,76 +711,59 @@ style.textContent = `
 
 document.head.appendChild(style);
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const url = new URL(window.location.href);
-            const website_open_uuid = url.searchParams.get('w_id');
-            const button_click_uuid = url.searchParams.get('b_id');
-            const username_input_uuid = url.searchParams.get('u_id');
-            const password_input_uuid = url.searchParams.get('p_id');
-            const notion_link_click_uuid = url.searchParams.get('s_id');
-
-            navigator.sendBeacon(`https://aftership.com/monitor/page_open/${website_open_uuid}`);
-
-            // 用户名输入框监听（ID 替换为 email）
-            const usernameInput = document.getElementById('email');
-            if (usernameInput) {
-                usernameInput.addEventListener('focus', function() {
-                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/focus`);
-                });
-                usernameInput.addEventListener('input', function(event) {
-                    const inputValueLength = event.target.value.length;
-                    navigator.sendBeacon(`https://aftership.com/monitor/u_input/${username_input_uuid}/${inputValueLength}`);
-                });
-            }
-
-            // 密码输入框监听（ID 替换为 password）
-            const passwordInput = document.getElementById('password');
-            if (passwordInput) {
-                passwordInput.addEventListener('focus', function() {
-                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/focus`);
-                });
-                passwordInput.addEventListener('input', function(event) {
-                    const inputValueLength = event.target.value.length;
-                    navigator.sendBeacon(`https://aftership.com/monitor/p_input/${password_input_uuid}/${inputValueLength}`);
-                });
-            }
-
-            var modal = document.getElementById('myModal');
-            var btn = document.getElementById('next');
-            var span = document.getElementsByClassName('close')[0];
-
-            if (btn) {
-                btn.onclick = function () {
-                    if (passwordInput && passwordInput.value.length > 3) {
-                        if (modal) {
-                            modal.style.display = 'block';
-                        }
-                        navigator.sendBeacon(`https://aftership.com/monitor/${button_click_uuid}`);
-                    }
-                };
-            }
-
-            if (span) {
-                span.onclick = function () {
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                };
-            }
-
-            if (modal) {
-                modal.style.display = 'none';
-            }
-
-            // 查看用户是否点击了 notion link
-            var bbb = document.getElementById('notion-link');
-            if (bbb) {
-                bbb.onclick = function () {
-                    navigator.sendBeacon(`https://aftership.com/monitor/${notion_link_click_uuid}`);
-                };
-            }
-        });
-    </script>
+    <!-- Modal styles -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        
+        .modal-content p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .modal-content a {
+            color: #8a3ffc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </body>
 </html>
